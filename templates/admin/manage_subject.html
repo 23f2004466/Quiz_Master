@@ -1,0 +1,169 @@
+{% extends "base_admin.html" %}
+{% block title %}Manage Subjects{% endblock %}
+{% block content %}
+
+<div class="container">
+    <h2 class="mt-4 text-center">Subjects</h2>
+    <form action="{{ url_for('admin.search_subject') }}" method="GET" class="form-inline d-flex justify-content-center mb-4">
+        <input type="text" name="subject_name" class="form-control mr-2" placeholder="Search Subject" aria-label="Search">
+        <button type="search" class="btn btn-primary">Search</button>
+    </form>
+    
+    {% for subject in subjects %}
+    <div class="card">
+        <div class="edit-delete-btns">
+            <button type="button" class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editSubjectModal{{ subject.id }}">Edit</button>
+            <a href="{{ url_for('admin.delete_subject', subject_id=subject.id) }}" class="btn btn-delete btn-sm">Delete</a>
+        </div>
+        <h5><strong>{{ subject.subject_name }}</strong></h5>
+        <table class="table text-white">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Chapter Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chapter in subject.chapters %}
+                <tr>
+                    <td>{{ chapter.id }}</td>
+                    <td>{{ chapter.chapter_name }}</td>
+                    <td>{{ chapter.chapter_description }}</td>
+                    <td>
+                        <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editChapterModal{{ chapter.id }}">Edit</button>
+                        <a href="{{ url_for('admin.delete_chapter', chapter_id=chapter.id) }}" class="btn btn-delete btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-center">
+        <button class="add-btn" data-bs-toggle="modal" data-bs-target="#addChapterModal{{ subject.id }}">+ Add Chapter</button>
+        </div>
+    </div>
+
+    <!-- Add Chapter Modal -->
+    <div class="modal fade" id="addChapterModal{{ subject.id }}" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Chapter</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('admin.add_chapter', subject_id=subject.id) }}" method="POST">
+                        <input type="hidden" id="subject_id" name="subject_id" value="{{ subject.id }}">
+                        <label for="chapter_name">Name:</label>
+                        <input type="text" id="chapter_name" name="chapter_name" class="form-control" placeholder="Enter chapter name" required>
+                        <label for="chapter_description" class="mt-2">Description:</label>
+                        <textarea name="chapter_description" id="chapter_description" class="form-control" placeholder="Enter chapter description" required></textarea>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Add</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    <!-- Add Subject Button -->
+    <div class="d-flex justify-content-center">
+    <button class="add-btn mt-5" data-bs-toggle="modal" data-bs-target="#addSubjectModal">+ Add Subject</button>
+</div>
+
+<!-- Add Subject Modal --> 
+<div class="modal fade" id="addSubjectModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Subject</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin.add_subject') }}" method="POST">
+                    <label for="subject_name">Name:</label>
+                    <input type="text" id="subject_name" name="subject_name" class="form-control" placeholder="Enter subject name" required>
+                    <!-- <label for="subject_description" class="mt-2">Description:</label>
+                    <textarea name="subject_description" id="subject_description" class="form-control" placeholder="Enter subject description" required></textarea> -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for subject in subjects %}
+<!-- Edit Subject Modal --> 
+<div class="modal fade" id="editSubjectModal{{ subject.id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subject</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin.edit_subject', subject_id=subject.id) }}" method="POST">
+                    <input type="hidden" id="subject_id" name="subject_id" value="{{ subject.id }}">    
+                    <label for="subject_name{{ subject.id }}">Name:</label>
+                    <input type="text" id="subject_name{{ subject.id }}" name="subject_name" class="form-control" placeholder="Enter subject name" value="{{ subject.subject_name }}" required>
+                    <!-- <label for="subject_description{{ subject.id }}" class="mt-2">Description:</label>
+                    <textarea name="subject_description" id="subject_description{{ subject.id }}" class="form-control" placeholder="Enter subject description" required>{{ subject.subject_description }}</textarea> -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% for subject in subjects %}
+{% for chapter in subject.chapters %}
+<!-- Edit Chapter Modal --> 
+<div class="modal fade" id="editChapterModal{{ chapter.id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Chapter ({{ chapter.chapter_name }})</h5>
+                <button type="button" class="close" data-bs-dismiss="modal"  aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin.edit_chapter', chapter_id=chapter.id) }}" method="POST">
+                    <input type="hidden" id="chapter_id" name="chapter_id" value="{{ chapter.id }}">
+                    <label for="chapter_name{{ chapter.id }}">Name:</label>
+                    <input type="text" id="chapter_name{{ chapter.id }}" name="chapter_name" class="form-control" placeholder="Enter chapter name" value="{{ chapter.chapter_name}}" required>
+                    <label for="chapter_description{{ chapter.id }}" class="mt-2">Description:</label>
+                    <textarea name="chapter_description" id="chapter_description{{ chapter.id }}" class="form-control" placeholder="Enter chapter description" required>{{chapter.chapter_description}}</textarea>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base_user.html" %}
+
+{% block title %}View Quizzes{% endblock %}
+
+{% block navbar_user %}
+{% include "navbar_user.html" %}
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Available Quizzes</h1>
+
+<!-- Quiz Filtering Form -->
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="form-group">
+                <label for="subject_id" class="form-label">Select Subject</label>
+                <select id="subject_id" name="subject_id" class="form-control">
+                    <option value="">-- Select Subject --</option>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if subject.id|string == request.form.get('subject_id', '') %}selected{% endif %}>
+                        {{ subject.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="chapter_id" class="form-label">Select Chapter</label>
+                <select id="chapter_id" name="chapter_id" class="form-control">
+                    <option value="">-- Select Chapter --</option>
+                    {% for chapter in chapters %}
+                    <option value="{{ chapter.id }}" data-subject-id="{{ chapter.subject_id }}" 
+                        {% if chapter.id|string == request.form.get('chapter_id', '') %}selected{% endif %}>
+                        {{ chapter.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter Quizzes</button>
+        </form>
+    </div>
+</div>
+
+<!-- Quiz List -->
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Quiz Name</th>
+                <th>Subject</th>
+                <th>Chapter</th>
+                <th>Date</th>
+                <th>Duration (Min)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+            <tr>
+                <td>{{ quiz.id }}</td>
+                <td>{{ quiz.name }}</td>
+                <td>{{ quiz.chapter.subject.name }}</td>  {# Corrected subject reference #}
+                <td>{{ quiz.chapter.name }}</td>
+                <td>{{ quiz.date_of_quiz.strftime("%Y-%m-%d") }}</td>
+                <td>{{ quiz.duration // 60 }}</td>
+                <td>
+                    <a href="#" class="btn btn-primary btn-sm">Attempt</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center">No quizzes available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- JavaScript for Chapter Filtering -->
+<script>
+    document.getElementById('subject_id').addEventListener('change', function () {
+        let subjectId = this.value;
+        let chapterDropdown = document.getElementById('chapter_id');
+        let chapters = chapterDropdown.querySelectorAll('option');
+
+        chapters.forEach(option => {
+            if (option.value === "" || option.dataset.subjectId === subjectId) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+
+        // Reset chapter selection when subject changes
+        chapterDropdown.value = "";
+    });
+
+    // Trigger change event on page load to apply correct filtering
+    document.getElementById('subject_id').dispatchEvent(new Event('change'));
+</script>
+{% endblock %}

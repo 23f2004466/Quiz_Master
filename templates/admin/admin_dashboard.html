@@ -1,0 +1,55 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Admin Dashboard - Quiz Master{% endblock %}
+
+{% block content %}
+
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+    
+    <div class="row">
+        <!-- Manage Quiz -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Manage Quiz</h5>
+                    <p class="card-text">Create, update, or delete quizzes.</p>
+                    <a href="{{ url_for('admin.quiz_manage') }}" class="btn btn-admin">Go to Quiz Management</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Users -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Manage Users</h5>
+                    <p class="card-text">View and manage registered users.</p>
+                    <a href="#" class="btn btn-admin">Go to User Management</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Reports -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">View Reports</h5>
+                    <p class="card-text">Check quiz performance and analytics.</p>
+                    <a href="#" class="btn btn-admin">Go to Reports</a>
+                </div>
+            </div>
+        </div>
+        <!-- Add Subject -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Subjects</h5>
+                    <p class="card-text">Create, update, or delete subjects.</p>
+                    <a href="{{ url_for('admin.manage_subject') }}" class="btn btn-admin">Go to Reports</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

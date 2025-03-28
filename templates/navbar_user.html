@@ -1,0 +1,36 @@
+<!-- <nav class="navbar">
+    <div class="navbar-container">
+        <a href="{{ url_for('user.user_dashboard') }}" class="navbar-brand">QuizMaster</a>
+        <div class="menu-dropdown">
+            <button class="menu-btn">Menu ▾</button>
+            <div class="dropdown-content">
+                {% for item in menu_items %}
+                <a href="{{ item.url }}">{{ item.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</nav>
+ -->
+ <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-3">
+    <a class="navbar-brand text-primary font-weight-bold" href="{{ url_for('user.user_dashboard') }}">QuizMaster</a>
+
+    <div class="mx-auto">
+        <span class="navbar-text text-dark">
+            Welcome, {{ user.username }}
+        </span>
+    </div>
+
+    <div class="dropdown ml-auto">
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Menu
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="{{ url_for('user.view_quiz') }}">View Quizzes</a>
+            <a class="dropdown-item" href="#">View Scores</a>
+            <!-- Add more user-specific links if needed -->
+        </div>
+    </div>
+
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger ml-2">Logout</a>
+</nav>
