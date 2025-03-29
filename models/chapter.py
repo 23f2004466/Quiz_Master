@@ -1,5 +1,5 @@
 from . import db
-
+#chapter model
 class Chapter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     chapter_name = db.Column(db.String(100), nullable=False)

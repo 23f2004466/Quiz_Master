@@ -1,0 +1,66 @@
+{% extends "base_user.html" %}
+
+{% block title %}User Dashboard - Quiz Master{% endblock %}
+{% block navbar_user %}
+{% include "navbar_user.html" %}
+{% endblock %}
+{% block content %}
+
+    <div class="container mt-4">
+        <h2 class="text-center text-dark  fw-bold">{{ quiz.quiz_title }}</h2>
+        <div class="text-center mb-3">
+            <span class="timer ">Time Left: <span id="timer"></span></span>
+        </div>
+
+        <form action="{{ url_for('user.quiz_start', quiz_id=quiz.id) }}" method="POST" id="quiz-start-form" data-duration="{{ time }}">
+            {% for question in questions %}
+            <div class="question mb-4">
+                <p class="fw-bold text-dark fs-5">{{ loop.index }}. {{ question.question_statement }}</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" id="q{{ question.id }}-opt1" value="1">
+                    <label class="form-check-label text-dark " for="q{{ question.id }}-opt1">{{ question.option1 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" id="q{{ question.id }}-opt2" value="2">
+                    <label class="form-check-label text-dark" for="q{{ question.id }}-opt2">{{ question.option2 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" id="q{{ question.id }}-opt3" value="3">
+                    <label class="form-check-label text-dark" for="q{{ question.id }}-opt3">{{ question.option3 }}</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="question-{{ question.id }}" id="q{{ question.id }}-opt4" value="4">
+                    <label class="form-check-label text-dark" for="q{{ question.id }}-opt4">{{ question.option4 }}</label>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit Quiz</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let quizForm = document.getElementById('quiz-start-form');
+        let totalTime = parseInt(quizForm.getAttribute('data-duration'));
+        let timerElement = document.getElementById('timer');
+
+        function updateTimer() {
+            let minutes = Math.floor(totalTime / 60);
+            let seconds = totalTime % 60;
+            timerElement.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            
+            if (totalTime > 0) {
+                totalTime--;
+                setTimeout(updateTimer, 1000);}
+             else {
+                alert('Time is up! Submitting your quiz.');
+                quizForm.submit();}
+            
+        }
+
+        updateTimer();
+    </script>
+{% endblock %}
+

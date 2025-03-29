@@ -25,6 +25,10 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password, password):
+            if not user.is_active:
+                flash('Your account is deactivated. Contact administrator.', 'danger')
+                return redirect(url_for('auth.login'))
+
             login_user(user)
 
             if user.is_admin():
@@ -32,6 +36,7 @@ def login():
             return redirect(url_for('user.user_dashboard'))
 
         flash('Invalid username or password', 'danger')
+        return redirect(url_for('auth.login'))
 
     return render_template('login.html')
 

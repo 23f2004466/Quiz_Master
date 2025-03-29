@@ -1,23 +1,16 @@
 {% extends "base_admin.html" %}
-
 {% block title %}Manage Quizzes - Quiz Master{% endblock %}
+{% block navbar_admin %}
+{% include "navbar_admin.html" %}
+{% endblock %}
 
 {% block content %}
-    <div class="navbar-custom">
-        <div class="nav-links">
-            <a href="#">Home</a> | 
-            <a href="#">Quiz</a> | 
-            <a href="#">Summary</a> | 
-            <a href="#">Logout</a>
-        </div>
-        <div class="welcome-text">Welcome Admin!</div>
-    </div>
-
+   
     <div class="container">
         <h2 class="mt-4 text-center">Manage Quizzes</h2>
-        <form action="#" method="GET" class="form-inline d-flex justify-content-center mb-4">
+        <form action="{{ url_for('admin.search_quiz') }}" method="GET" class="form-inline d-flex justify-content-center mb-4">
             <input type="text" name="quiz_title" class="form-control mr-2" placeholder="Search Quizzes by Title" aria-label="Search">
-            <button type="search" class="btn btn-primary">Search 🔍</button>
+            <button type="search" class="btn btn-primary">Search </button>
         </form>
         <div class="text-center mb-3">
             <button class="add-btn" data-bs-toggle="modal" data-bs-target="#addQuizModal">+ Add New Quiz</button>
@@ -64,15 +57,24 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Quiz</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <form action="{{ url_for('admin.edit_quiz', quiz_id=quiz.id) }}" method="POST">
                             <label for="quiz_title">Quiz Title:</label>
                             <input type="text" name="quiz_title" class="form-control" value="{{ quiz.quiz_title }}" required placeholder="Enter quiz title">
+                            <label for="date_of_quiz" class="mt-2">Date:</label>
+                            <input type="date" id="date_of_quiz" name="date_of_quiz" class="form-control" value="{{ quiz.date_of_quiz.strftime('%Y-%m-%d') }}
+                            " required>
+                            <label for="time_of_quiz" class="mt-2">Time:</label>
+                            <input type="time" id="time_of_quiz" name="time_of_quiz" class="form-control" value="{{ quiz.time_of_quiz.strftime('%H:%M') }}" required>
+                            <label for="duration" class="mt-2">Duration (in minutes):</label>
+                            <input type="number" id="duration" name="duration" class="form-control" value="{{ quiz.duration }}" required>
+                            <label for="remarks" class="mt-2">Remarks:</label>
+                            <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter remarks">{{ quiz.remarks }}</textarea>
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
                         </form>
                     </div>
@@ -88,7 +90,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add Quiz</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -108,11 +110,12 @@
                     <input type="time" id="time_of_quiz" name="time_of_quiz" class="form-control" placeholder="Select time" required>
                     <label for="duration" class="mt-2">Duration (in minutes):</label>
                     <input type="number" id="duration" name="duration" class="form-control" placeholder="Enter duration" required>
-                    <label for="remarks" class="mt-2">Remarks:</label>
+                    <!-- Add remarks  field c -->
+                    <label for="remarks" class="mt-2">Remarks:</label> 
                     <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter remarks" required></textarea>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Add</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
@@ -129,7 +132,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add Question</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -137,15 +140,7 @@
                 <form action="{{ url_for('admin.add_question', quiz_id=quiz.id) }}" method="POST">
 
                     <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
-                    <!-- <label for="question_type">Question Type:</label>
-                    <select name="question_type" id="question_type" class="form-control" required onchange="updateModal(this.value)">
-                        
-                        <option value="MCQ-Single">Multiple Choice (Single Answer)</option>
-                        <option value="MCQ-Multiple">Multiple Choice (Multiple Answer)</option>
-                        <option value="True-False">True/False</option>
-                        <option value="Numerical">Numerical Input</option>
-                       
-                    </select> -->
+                    
                     <label for="question_title">Question Title:</label>
                     <input type="text" id="question_title" name="question_title" class="form-control" placeholder="Enter question title" required>
                    
@@ -179,7 +174,7 @@
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Add Question</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
@@ -199,7 +194,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit ({{quiz.quiz_title}}) Question</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -233,7 +228,7 @@
                    
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>

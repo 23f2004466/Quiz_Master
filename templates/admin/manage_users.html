@@ -1,0 +1,61 @@
+{% extends "base_admin.html" %}
+{% block title %}Admin Dashboard - Quiz Master{% endblock %}
+{% block navbar_admin %}
+{% include "navbar_admin.html" %}
+{% endblock %}
+{% block content %}
+
+    <h2 class="mt-4 text-center text-dark fw-bold">User Management</h2>
+    
+<!-- templates/admin/manage_users.html -->
+
+<div class="container mt-5">
+    
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Qualification</th>
+                <th>DOB</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.fullname }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.qualification }}</td>
+                <td>{{ user.dob }}</td>
+                <td>
+                    {% if user.is_active %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-danger">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" class="d-inline">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        {% if user.is_active %}
+                            <button type="submit" name="action" value="deactivate" class="btn btn-sm btn-warning">Deactivate</button>
+                        {% else %}
+                            <button type="submit" name="action" value="activate" class="btn btn-sm btn-success">Activate</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

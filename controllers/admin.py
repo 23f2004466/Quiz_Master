@@ -15,32 +15,32 @@ from models import db
 
 admin_bp = Blueprint('admin', __name__)
 
-# ✅ Admin-only access decorator
+# admin-acess decorator
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or current_user.role != 'admin':
             flash("Access Denied! Admins Only.", "danger")
-            return redirect(url_for('auth.login'))  # Redirect to login if not admin
+            return redirect(url_for('auth.login'))
         return f(*args, **kwargs)
     return decorated_function
 
 @admin_bp.route('/admin_dashboard')
-@login_required  # ✅ User must be logged in
-@admin_required  # ✅ User must be admin
+@login_required  
+@admin_required  
 def admin_dashboard():
-    # Corrected Join: Quiz → Chapter → Subject
+    # Fetch all quizzes
     quizzes = Quiz.query.join(Chapter).join(Subject).all()
     
-    # Fetch subject names along with quiz titles
+    
     quiz_names = [f"{quiz.chapter.subject.subject_name} - {quiz.quiz_title}" for quiz in quizzes]
     
     average_scores = []
     completion_rates = []
 
-    total_users = User.query.count() - 1  # Excluding Admin
+    total_users = User.query.count() - 1  # excluding admin
     if total_users < 1:
-        total_users = 1  # Avoid division by zero
+        total_users = 1  
 
     for quiz in quizzes:
         scores = Score.query.filter_by(quiz_id=quiz.id).all()
@@ -56,7 +56,7 @@ def admin_dashboard():
         average_scores.append(average_score)
         completion_rates.append(completion_rate)
 
-    return render_template("admin/admin_dashboard.html",  # Fix template path if incorrect
+    return render_template("admin/admin_dashboard.html",  
                            quiz_names=quiz_names,
                            average_scores=average_scores,
                            completion_rates=completion_rates)
@@ -85,7 +85,7 @@ def add_subject():
         return redirect(url_for('admin.manage_subject'))
     return redirect(url_for('admin.manage_subject'))
     
-#doubt in get 
+
 #edit a subject
 @admin_bp.route('/edit_subject/<int:subject_id>', methods=['GET', 'POST'])
 @login_required
@@ -93,7 +93,7 @@ def add_subject():
 def edit_subject(subject_id):
     subject = Subject.query.get(subject_id)
     if request.method == 'POST':
-        subject.subject_name = request.form.get('subject_name')  # Update the subject name
+        subject.subject_name = request.form.get('subject_name')  # Updating the subject name
         db.session.commit()
         return redirect(url_for('admin.manage_subject'))
     return redirect(url_for('admin.manage_subject'))
@@ -192,7 +192,7 @@ def add_question(quiz_id):
 @admin_required
 def edit_question(question_id):
     
-    # Add logic to update the question
+  
     question = Question.query.get(question_id)
    
     question.question_statement = request.form.get('question_statement')
@@ -211,7 +211,7 @@ def edit_question(question_id):
 @admin_required
 def delete_question(question_id):
     
-    # Add logic to delete the question
+  
     question = Question.query.get(question_id)
     if not question:
         flash("Question not found", "danger")
@@ -235,7 +235,7 @@ def search_subject():
 
 
 
-# Route for managing quizzes
+# route for managing quizzes
 @admin_bp.route("/quiz-manage")
 @login_required
 @admin_required  # Only admin can access this route 
@@ -246,14 +246,14 @@ def quiz_manage():
     return render_template("admin/quiz_manage.html", quizzes=quizzes, chapters=chapters)
 
 
-# Route to add a quiz
+# route to add a quiz
 @admin_bp.route("/add-quiz", methods=["POST"])
 @login_required
 @admin_required
 def add_quiz():
     
     print(request.form)
-    # Add logic to create a quiz
+    
     quiz_title = request.form.get('quiz_title')
     chapter_id = request.form.get('chapter_id')
     date_of_quiz = request.form.get('date_of_quiz')
@@ -261,54 +261,45 @@ def add_quiz():
     remarks = request.form.get('remarks')
     duration = request.form.get('duration')
 
- # Convert date and time to Python objects
+ #  Converting date and time to Python objects
     date_of_quiz = datetime.strptime(date_of_quiz, '%Y-%m-%d').date()
     time_of_quiz = datetime.strptime(time_of_quiz, '%H:%M').time()
     duration = int(duration) # convert duration to integer
 
 
-    new_quiz = Quiz(
-        quiz_title=quiz_title,
-        chapter_id=chapter_id,
-        date_of_quiz=date_of_quiz,
-        time_of_quiz=time_of_quiz,
-        remarks=remarks,
-        duration=duration
-    )
+    new_quiz = Quiz(quiz_title=quiz_title,chapter_id=chapter_id,date_of_quiz=date_of_quiz,time_of_quiz=time_of_quiz,remarks=remarks,
+        duration=duration)
     
     db.session.add(new_quiz)
     db.session.commit()
-
     return redirect(url_for("admin.quiz_manage"))
+    
+
 
 # Route to edit a quiz
 @admin_bp.route("/edit-quiz/<int:quiz_id>", methods=["POST"])
 @login_required
-@admin_required  # Only admin can access this route 
+@admin_required  
 
 def edit_quiz(quiz_id):
     
-   
-    # Add logic to update the quiz details
     quiz = db.session.get(Quiz, quiz_id)
     quiz.quiz_title = request.form.get('quiz_title')
-    
     
     db.session.commit()
 
     return redirect(url_for("admin.quiz_manage"))
 
-# Route to delete a quiz
+# route to delete a quiz
 @admin_bp.route("/delete-quiz/<int:quiz_id>")
 @login_required
-@admin_required  # Only admin can access this route
+@admin_required  
 def delete_quiz(quiz_id):
     
-    # Add logic to delete the quiz
     quiz = db.session.get(Quiz, quiz_id) 
     if not quiz:
         flash("Quiz not found", "danger")
-        return redirect(url_for("admin.quiz_manage"))  # can query by primary key sql 2.0
+        return redirect(url_for("admin.quiz_manage")) 
     db.session.delete(quiz)
     db.session.commit()
     return redirect(url_for("admin.quiz_manage"))
@@ -326,3 +317,28 @@ def search_quiz():
 
 
 
+@admin_bp.route('/manage_users', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_users():
+    users = User.query.all()
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        action = request.form.get('action')
+        user = User.query.get(user_id)
+        if user:
+            if action == "activate":
+                user.is_active = True
+                flash(f'User {user.username} activated.', 'success')
+            elif action == "deactivate":
+                user.is_active = False
+                flash(f'User {user.username} deactivated.', 'warning')
+            db.session.commit()
+        return redirect(url_for('admin.manage_users'))
+
+    return render_template('admin/manage_users.html', users=users)
+            
+
+
+
+        
