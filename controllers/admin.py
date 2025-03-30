@@ -1,5 +1,8 @@
-import matplotlib.pyplot as plt 
+import matplotlib
+from flask import current_app
+matplotlib.use('Agg')
 import os
+import matplotlib.pyplot as plt 
 from functools import wraps
 from datetime import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash,request, session
@@ -11,6 +14,7 @@ from models.user import User
 from models.score import Score
 from models.question import Question
 from models import db
+
 
 
 admin_bp = Blueprint('admin', __name__)
@@ -25,42 +29,62 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+
+def generate_charts():
+    """Generates bar and pie charts and saves them as images."""
+    
+    # fetching Data for Bar Chart (Average Scores)
+    charts_dir = os.path.join(current_app.static_folder, "charts")
+    if not os.path.exists(charts_dir):
+        os.makedirs(charts_dir)
+    quizzes = db.session.query(Quiz.quiz_title, db.func.avg(Score.total_score))\
+                        .join(Score, Quiz.id == Score.quiz_id)\
+                        .group_by(Quiz.id)\
+                        .all()
+
+    if quizzes:
+        labels, scores = zip(*quizzes)
+
+        plt.figure(figsize=(6, 4))
+        plt.bar(labels, scores, color='royalblue')
+        plt.ylabel("Average Score")
+        plt.title("Average Scores per Quiz")
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.savefig(os.path.join(charts_dir, "average_scores.png"))
+        plt.close()
+    
+        quizzes = db.session.query(Quiz.quiz_title, db.func.count(Score.id))\
+                        .join(Score, Quiz.id == Score.quiz_id)\
+                        .filter(Score.completed == True)\
+                        .group_by(Quiz.id)\
+                        .all()
+
+    print("Quiz Completion Data:", quizzes)  # Debugging print
+
+    if quizzes:
+        labels, counts = zip(*quizzes)
+    else:
+        labels, counts = ["No Data"], [1]  
+
+    plt.figure(figsize=(5, 5))
+    plt.pie(counts, labels=labels, autopct='%1.1f%%', colors=['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0'])
+    plt.title("Quiz Completion Rates")
+    plt.tight_layout()
+    plt.savefig(os.path.join(charts_dir, "completion_rates.png"))
+    plt.close()
+
+
+
+
 @admin_bp.route('/admin_dashboard')
-@login_required  
-@admin_required  
 def admin_dashboard():
-    # Fetch all quizzes
-    quizzes = Quiz.query.join(Chapter).join(Subject).all()
     
-    
-    quiz_names = [f"{quiz.chapter.subject.subject_name} - {quiz.quiz_title}" for quiz in quizzes]
-    
-    average_scores = []
-    completion_rates = []
-
-    total_users = User.query.count() - 1  # excluding admin
-    if total_users < 1:
-        total_users = 1  
-
-    for quiz in quizzes:
-        scores = Score.query.filter_by(quiz_id=quiz.id).all()
-        
-        if scores:
-            average_score = sum(score.total_score for score in scores) / len(scores)
-            users_attempted = len(scores)
-            completion_rate = (users_attempted / total_users) * 100
-        else:
-            average_score = 0
-            completion_rate = 0
-        
-        average_scores.append(average_score)
-        completion_rates.append(completion_rate)
-
-    return render_template("admin/admin_dashboard.html",  
-                           quiz_names=quiz_names,
-                           average_scores=average_scores,
-                           completion_rates=completion_rates)
-
+    generate_charts()  # calling function to create charts
+    return render_template('admin/admin_dashboard.html', 
+                           bar_chart="static/charts/average_scores.png",
+                           pie_chart="static/charts/completion_rates.png")
 
 #fetch all subjects
 @admin_bp.route('/manage_subject', methods=['GET', 'POST'])
@@ -160,7 +184,7 @@ def delete_chapter(chapter_id):
 @admin_required
 def add_question(quiz_id):
     
-    # Add logic to add a question
+    
     question_title = request.form.get('question_title')
    
     question_statement = request.form.get('question_statement')

@@ -59,6 +59,7 @@
             <div class="card-body">
                 <h3 class="mb-3">Quiz History</h3>
                 <div class="table-container">
+                    {% if scores %}
                     <table class="table">
                         <thead>
                             <tr>
@@ -72,17 +73,19 @@
                             <tr>
                                 <td>{{ score.quiz.quiz_title }}</td>
                                 <td>{{ score.user.time_stamp.strftime("%d-%m-%Y  %I:%M %p") if score.user.time_stamp else '' }}</td>
-
                                 <td>{{ score.total_score }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                    {% else %}
+                    <p>No quiz attempts found. Please take a quiz to see your history.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
-    
     </section>
+                  
     
 
 

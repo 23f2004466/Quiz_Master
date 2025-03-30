@@ -110,7 +110,7 @@
                     <input type="time" id="time_of_quiz" name="time_of_quiz" class="form-control" placeholder="Select time" required>
                     <label for="duration" class="mt-2">Duration (in minutes):</label>
                     <input type="number" id="duration" name="duration" class="form-control" placeholder="Enter duration" required>
-                    <!-- Add remarks  field c -->
+                    
                     <label for="remarks" class="mt-2">Remarks:</label> 
                     <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter remarks" required></textarea>
                     <div class="modal-footer">
@@ -125,7 +125,7 @@
 
     <!-- Add Question Modal -->
     
-        <!-- Modal content goes here -->
+
 {% for quiz in quizzes %}
 <div class="modal fade" id="addQuestionModal{{ quiz.id }}" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -186,7 +186,7 @@
 
     <!-- Edit Question Modal -->
     
-        <!-- Modal content goes here -->
+       
 {% for quiz in quizzes %}
 {% for question in quiz.questions %}
 <div class="modal fade" id="editQuestionModal{{ question.id }}" tabindex="-1" role="dialog">

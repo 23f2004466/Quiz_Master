@@ -41,11 +41,24 @@
         </form>
     </div>
 
+    <!-- Time Up Modal -->
+<div class="modal fade" id="timeUpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Time's Up!</h5>
+            </div>
+            <div class="modal-body">
+                Time is up! Submitting your quiz.
+            </div>
+        </div>
+    </div>
+</div>
     <script>
         let quizForm = document.getElementById('quiz-start-form');
         let totalTime = parseInt(quizForm.getAttribute('data-duration'));
         let timerElement = document.getElementById('timer');
-
+        
         function updateTimer() {
             let minutes = Math.floor(totalTime / 60);
             let seconds = totalTime % 60;
@@ -55,12 +68,19 @@
                 totalTime--;
                 setTimeout(updateTimer, 1000);}
              else {
-                alert('Time is up! Submitting your quiz.');
-                quizForm.submit();}
-            
+                let timeUpModal = new bootstrap.Modal(document.getElementById('timeUpModal'));
+            timeUpModal.show();
+
+            // Automatically submit the quiz after 2 seconds (to prevent user from clicking submit button)
+            setTimeout(() => {
+                quizForm.submit();
+            }, 2000);
         }
+    }
+        
 
         updateTimer();
     </script>
+
 {% endblock %}
 

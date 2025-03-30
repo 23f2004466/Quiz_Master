@@ -8,7 +8,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     fullname = db.Column(db.String(100), nullable=False)
-    role = db.Column(db.String(50), default='user')  # Default role = "user" cha
+    role = db.Column(db.String(50), default='user')  
     qualification = db.Column(db.String(100), nullable=False)
     dob = db.Column(db.Date, nullable=False)
     is_active = db.Column(db.Boolean, default=True)  # if user is active or not
@@ -22,9 +22,9 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password, password)
 
     def get_id(self):
-        return str(self.id)  # Flask-Login requires a string ID
+        return str(self.id)  #  flask-Login  requires a string ID
 
 
     def is_admin(self):
-        return self.role == 'admin'  # Returns True if user is admin
+        return self.role == 'admin'  #will return True if user is admin
 

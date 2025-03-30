@@ -2,12 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import os  # For chart upload folder
-from flask_bcrypt import Bcrypt
 from models import db, create_admin
 from models.user import User  
 from controllers.auth import auth_bp
 from controllers.admin import admin_bp
 from controllers.user import user_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -22,12 +22,11 @@ def create_app():
     # Initialize Flask-Login
     login_manager = LoginManager()
     login_manager.init_app(app)
-    login_manager.login_view = "auth.login"  # Use 'auth.login' (Correct blueprint route)
-
-    # ✅ Load user for Flask-Login
+    login_manager.login_view = "auth.login"  
+    # load user for Flask-Login
     @login_manager.user_loader
     def load_user(user_id):
-        return db.session.get(User,int(user_id))  #  Corrected get function
+        return db.session.get(User,int(user_id))  
 
     # Register Blueprints
     app.register_blueprint(auth_bp)

@@ -3,38 +3,14 @@ body {
     background-size: cover;
     
     background-repeat: no-repeat; 
-    color: white; 
+    color: rgb(54, 51, 51); 
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     overflow-x: hidden; /* Hide scrolling */
     background-attachment: fixed;
-    width: 100vw; 
+    width: 100vw; }
   
-}
-body:has(.login-container) {
-    height: 100vh;
-    overflow: hidden; /* Prevent scrolling  login page */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;  
-    width: 100vw;
-}
-
-
-.login-container {
-    text-align: center;
-    width: 400px;
-    margin-left: -190px;
-}
-
-
 
 
 .btn-custom {
@@ -64,8 +40,8 @@ body:has(.login-container) {
     color: rgb(10, 10, 10);
     margin-bottom: 20px;
     border-radius: 8px;
-    padding: 15px;
-}
+    padding: 15px;}
+
 .table {
     background: transparent;
 }
@@ -84,8 +60,8 @@ body:has(.login-container) {
     border: none;
 }
 .container mt-5 {
-    margin-top: 1rem !important;
-}
+    margin-top: 1rem !important;}
+
 th, td {
     color: white;
 }
@@ -103,13 +79,13 @@ th, td {
 .btn-edit:hover {
     background-color: rgba(245, 224, 227, 0.8);
 }
+.btn-delete:hover {
+    background-color: rgba(211, 32, 32, 0.8);
+}
 .btn-delete {
     background: rgb(61, 6, 6);
     color: white;
     border: none;
-}
-.btn-delete:hover {
-     background-color: rgba(211, 32, 32, 0.8);
 }
 .modal label {
 display: block !important;  

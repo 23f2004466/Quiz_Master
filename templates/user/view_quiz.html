@@ -10,7 +10,7 @@
     <h2 class="mt-4 text-center fw-bold text-dark">Quiz Dashboard</h2>
     <div class="container-quiz">
 
-    <!-- search Filters -->
+    
     <div class="mb-3">
         <label for="subjectSelect" class="form-label fw-bold text-dark">Filter by Subject:</label>
         <select id="subjectSelect" class="form-select" onchange="filterQuizzes()">
@@ -59,22 +59,24 @@
                 <td>{{ quiz.date_of_quiz }}</td>
                 <td>{{ quiz.time_of_quiz }}</td>
                 <td>{{ quiz.questions | length }}</td>
-                {% if quiz.scores %}
-                <td>Completed</td>
-                {% else %}
-                <td>Not Completed</td>
-                {% endif %}
-                {% if quiz.scores %}
-                {% for score in quiz.scores %}
-                {% if loop.last %}
-                <td>{{ score.total_score }}/{{ quiz.questions | length }}</td>
-                {% endif %}
-                {% endfor %}
-                {% else %}
-                <td>Not Attempted</td>
-                {% endif %}
+<!--checking if the user has a score for this quiz  -->
                 <td>
-                    {% if quiz.scores %}
+                    {% if quiz.user_score %}
+                        Completed
+                    {% else %}
+                        Not Completed
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if quiz.user_score %}
+                        {{ quiz.user_score.total_score }}/{{ quiz.questions | length }}
+                    {% else %}
+                        Not Attempted
+                    {% endif %}
+                </td>
+                <td>
+                    {% if quiz.user_score %}
                     <a href="{{ url_for('user.quiz_start', quiz_id=quiz.id) }}" class="btn btn-warning">Retake Quiz</a>
                     {% else %}
                     <a href="{{ url_for('user.quiz_start', quiz_id=quiz.id) }}" class="btn btn-primary">Start Quiz</a>
@@ -94,6 +96,7 @@
         const chapterId = document.getElementById('chapterSelect').value;
         const rows = document.querySelectorAll('#quizTableBody tr');
 
+
         rows.forEach(row => {
             const rowSubjectId = row.getAttribute('data-subject');
             const rowChapterId = row.getAttribute('data-chapter');
@@ -102,11 +105,11 @@
             if (matchesSubject && matchesChapter) {
                 row.style.display = '';}
              else {
-                row.style.display = 'none';}
-            
-        });
-    }
-</script>
-
-{% endblock %}
-
+                 row.style.display = 'none';}
+                 
+             });
+         }
+     </script>
+     
+     {% endblock %}
+     

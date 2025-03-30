@@ -20,10 +20,10 @@
         </div>
     </nav>
 
-    <!-- Sidebar and Content -->
+    <!--# Sidebar-->
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar -->
+
             <nav class="col-md-2 d-none d-md-block bg-white sidebar border-end vh-100">
                 <div class="position-sticky">
                     <ul class="nav flex-column mt-3">
@@ -44,80 +44,31 @@
                 </div>
             </nav>
 
-            <!-- Main Content -->
+            <!-- main Content -->
             <main class="col-md-10 ms-sm-auto px-md-4">
                 <h2 class="mt-4 mb-4 fw-bold">Admin Dashboard</h2>
 
                 <div class="row">
-                    <!-- Bar Chart - Average Scores -->
+                    <!-- #bar chart avg score -->
                     <div class="col-md-6">
                         <div class="card shadow-sm p-3">
                             <h5 class="text-center">Average Scores</h5>
-                            <canvas id="averageScoresChart"></canvas>
+                            <img src="{{ url_for('static', filename='charts/average_scores.png') }}" class="img-fluid" alt="Average Scores">
                         </div>
                     </div>
 
-                    <!-- Pie Chart - Completion Rates -->
+                    <!-- pie Chart - Completion Rates -->
                     <div class="col-md-6">
                         <div class="card shadow-sm p-3">
                             <h5 class="text-center">Completion Rates</h5>
-                            <canvas id="completionRatesChart"></canvas>
+                            <img src="{{ url_for('static', filename='charts/completion_rates.png') }}" class="img-fluid" alt="Completion Rates">
                         </div>
                     </div>
+
                 </div>
             </main>
         </div>
     </div>
-
-    <!-- JSON Data -->
-    <script type="application/json" id="quizData">
-        {
-            "quiz_names": {{ quiz_names | tojson | safe if quiz_names else '[]' }},
-            "average_scores": {{ average_scores | tojson | safe if average_scores else '[]' }},
-            "completion_rates": {{ completion_rates | tojson | safe if completion_rates else '[]' }}
-        }
-    </script>
-
-    <!-- Chart.js Script -->
-    <script>
-        const quizData = JSON.parse(document.getElementById("quizData").textContent);
-
-        // Bar Chart - Average Scores
-        new Chart(document.getElementById('averageScoresChart'), {
-            type: 'bar',
-            data: {
-                labels: quizData.quiz_names,
-                datasets: [{
-                    label: 'Average Score',
-                    data: quizData.average_scores,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-
-        // Pie Chart - Completion Rates
-        new Chart(document.getElementById('completionRatesChart'), {
-            type: 'pie',
-            data: {
-                labels: quizData.quiz_names,
-                datasets: [{
-                    data: quizData.completion_rates,
-                    backgroundColor: [
-                        '#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
-    </script>
 
 </body>
 </html>
